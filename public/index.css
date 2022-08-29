@@ -1,0 +1,14 @@
+body {
+    background-color: #5b5b5b;
+    color: #ffff;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing:  10px;
+    text-align: center;
+}
+
+audio {
+    margin-left: 170px;
+}

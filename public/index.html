@@ -6,29 +6,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RoseMusics</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
+    <img id="cover-art">
     <audio controls id="audio">
-        <source id="source">
+        <source type="audio/mpeg" id="source">
     </audio>
+    <table>
+        <tbody id="list">
+        </tbody>
+    </table>
+
     <script>
+        let songs = []
+        let currentsong
+        const audio = document.getElementById("audio")
+        function cover(song) {
+            document.getElementById('cover-art').setAttribute('src', `/cover/${song}`);
+        }
         function play(song) {
+            currentsong = song
             const source = document.getElementById("source")
-            source.setAttribute("src", "/" + song)
-            const audio = document.getElementById("audio")
+            source.setAttribute("src", "/music/" + song)
             audio.load()
             audio.play()
         }
+        function playnext() {
+            const songindex = songs.findIndex((song) => song === currentsong)
+            play(songs[songindex + 1 >= songs.length ? 0 : songindex + 1])
+        }
+        audio.addEventListener("ended", playnext)
+
         fetch('/!')
             .then((response) => response.json())
             .then((data) => {
+                songs = data
                 const table = document.getElementById("list")
                 data.forEach((song) => {
                     const row = document.createElement("tr")
                     table.appendChild(row)
                     const cell = document.createElement("td")
-                    cell.setAttribute("onclick", `play("${song}")`)
+                    cell.setAttribute("onclick", `play("${song}");cover("${song}")`)
                     const text = document.createTextNode(song);
                     row.appendChild(cell)
                     cell.appendChild(text)
@@ -36,10 +56,6 @@
 
             })
     </script>
-    <table>
-        <tbody id="list">
-        </tbody>
-    </table>
 </body>
 
 </html>
