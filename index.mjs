@@ -73,6 +73,9 @@ app.get ("/cover/:file", (req, res) => {
   const file = join("music", fileParam);
   const tags = NodeID3.read(file)
   console.log (tags)
+  if (!tags.image){
+    return
+  }
   res.writeHead(200, {
     'Content-Type': tags.image.mime,
     'Content-Length': tags.image.imageBuffer.length
