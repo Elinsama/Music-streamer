@@ -57,7 +57,7 @@ app.get('/music/:file', (req, res) => {
 
     let readable = createReadStream(file, { start: start, end: end });
     pipeline(readable, res, err => {
-      if(err) console.log(err);
+      if (err) console.log(err);
     });
   } else {
     res.writeHead(200, {
@@ -66,24 +66,32 @@ app.get('/music/:file', (req, res) => {
     });
     let readable = createReadStream(file);
     pipeline(readable, res, err => {
-      if(err) console.log(err);
+      if (err) console.log(err);
     });
   }
 })
 
-app.get ("/music/cover/:file", (req, res) => {
+app.get("/music/cover/:file", (req, res) => {
   const fileParam = req.params.file;
   const file = join("music", fileParam);
   const tags = NodeID3.read(file)
-  console.log (tags)
-  if (!tags.image){
-    return
+  if (!tags.image) {
+    res.sendStatus(404);
+    return;
   }
   res.writeHead(200, {
     'Content-Type': tags.image.mime,
     'Content-Length': tags.image.imageBuffer.length
   })
   res.end(tags.image.imageBuffer);
+})
+
+app.get("/music/info/:file", (req, res) => {
+  const fileParam = req.params.file;
+  const file = join("music", fileParam);
+  const tags = NodeID3.read(file)
+  console.log(tags)
+  res.send({ artist: tags.artist, title: tags.title });
 })
 
 app.use(express.static(join('.', 'public')))
